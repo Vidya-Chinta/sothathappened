@@ -1,0 +1,70 @@
+---
+title: I Added a Queue and Everything Got Worse
+description: The request got faster. The system got a lot more interesting.
+publishedAt: 2026-08-16
+sample: true
+tags: [Distributed Systems, Reliability]
+---
+
+The endpoint was slow because it did too much work. Moving that work to a queue made the endpoint fast.
+
+For about an hour, this felt like the end of the story.
+
+Then a job ran twice. Another one arrived out of order. A worker finished the expensive part and died before acknowledging the message. The dashboard stayed green because it was watching request latency, which was now excellent.
+
+We had improved one measurement and acquired several new responsibilities.
+
+## A queue moves the boundary
+
+Before the queue, the client waited for the operation. After the queue, the client waited for a promise that the operation would eventually happen.
+
+That changes the contract. A successful response now means “accepted,” not “completed.” The interface needs a way to express pending work and failure after acceptance.
+
+The system needs to know which state each operation is in, even when a worker disappears.
+
+## Expect duplicates
+
+With at-least-once delivery, the same message may be delivered more than once. That is not a bug in the queue. It is part of the deal.
+
+A database uniqueness constraint can help protect a local effect:
+
+```sql
+BEGIN;
+
+INSERT INTO processed_jobs (job_id)
+VALUES ('job_123')
+ON CONFLICT DO NOTHING;
+
+-- Apply the database effect only if this transaction
+-- inserted the job marker. Commit both together.
+
+COMMIT;
+```
+
+The marker and the effect must share the transaction. If you record completion first and crash before doing the work, you have built a reliable way to skip it.
+
+External effects require another approach: a provider-supported idempotency key, a transactional outbox, reconciliation, or a combination. A local transaction does not extend over the network just because you really need it to.
+
+## Ordering is a requirement, not a feeling
+
+More workers can increase throughput. They can also change completion order.
+
+If an address update and a shipment request depend on ordering, decide where that dependency is enforced. Options include partitioning by entity, checking versions, or representing the dependency directly in the workflow.
+
+Global ordering is often more expensive than the actual requirement. Start by identifying which operations must be ordered relative to which other operations.
+
+## Measure the waiting
+
+Request latency stopped telling the whole story as soon as the request stopped doing the work.
+
+Watch the age of the oldest pending job, processing duration, retry count, dead-letter volume, and time to a user-visible result. Queue depth helps, but a thousand tiny jobs and a thousand video transcodes are rather different afternoons.
+
+Set retry budgets. A failing dependency does not need every worker repeatedly asking whether it is still failing.
+
+## The queue was not the mistake
+
+The queue solved a real problem. Treating it as a performance change rather than a change to the system’s semantics was the mistake.
+
+Asynchronous work buys flexibility by making time, ownership, and failure more explicit. Budget for that work before celebrating the faster endpoint.
+
+**So that happened.**

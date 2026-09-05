@@ -1,0 +1,93 @@
+---
+title: The Model Is Only Half the System
+description: Why reliable AI systems depend as much on the harness around the model as the model itself.
+publishedAt: 2026-09-01
+featured: true
+sample: true
+tags: [AI, Agents, Systems]
+---
+
+import Aside from "../../components/content/Aside.astro";
+
+The demo was convincing. Give the model a task, watch it pick a tool, get a useful answer. The distance between “this works” and “we can depend on this” appeared to be one deployment.
+
+That distance turned out to contain most of the engineering.
+
+A model can suggest the right action and still belong to an unreliable system. The tool can time out. The credentials can be too broad. The context can be stale. A retry can repeat something that really should happen only once.
+
+None of those failures is fixed by making the answer sound more confident.
+
+## Start with the boundary
+
+The model proposes an action. Your application decides whether that action is allowed, valid, and safe to execute in the current state.
+
+That boundary deserves to be explicit. A tool call is untrusted input, even when the tool name looks familiar and the arguments happen to be valid JSON.
+
+```typescript
+async function executeAction(action: ProposedAction, user: User) {
+  const input = toolSchema.parse(action.arguments);
+  await permissions.require(user, action.tool, input);
+
+  return executor.run({
+    tool: action.tool,
+    input,
+    deadlineMs: 5_000,
+    operationId: action.operationId,
+  });
+}
+```
+
+The code is intentionally unexciting. It separates validation, authorization, and execution so that each can be inspected independently. The model does not get to grant itself permission by describing a good reason.
+
+<Aside title="A schema is not a permission check">
+  A request can be perfectly well formed and still be something the current user
+  must not do. Validate its shape and its authority separately.
+</Aside>
+
+## Retries need a theory of what happened
+
+When a tool times out, you know that you did not receive a result. You do not necessarily know that the operation failed.
+
+For a read, retrying may be fine. For a payment or a message, the distinction is rather more interesting.
+
+A useful execution layer distinguishes between three outcomes:
+
+| Outcome   | What the system knows         | Next step                     |
+| --------- | ----------------------------- | ----------------------------- |
+| Completed | The operation succeeded       | Record and return the result  |
+| Rejected  | The operation did not run     | Explain or repair the request |
+| Unknown   | The response was lost or late | Reconcile before retrying     |
+
+An operation identifier helps only when the receiving system actually uses it to deduplicate work. Adding an `idempotencyKey` property to a request does not create idempotency by optimism.
+
+## Context is part of correctness
+
+A long context window is storage capacity, not a memory policy.
+
+What gets retained? Which source wins when two facts conflict? How do you keep a retrieved document from being treated as an instruction? When does old information expire?
+
+Those questions belong to the application. Useful memory has provenance, a scope, and a reason to exist. Otherwise it becomes an unusually expensive collection of things someone once said.
+
+## Evaluate the whole path
+
+An answer-quality benchmark can tell you whether the model is improving. It cannot, by itself, tell you whether the system behaves well when a tool returns half a response.
+
+Keep a small set of end-to-end cases that exercise the operational edges:
+
+- A permission is missing or revoked during execution.
+- A tool completes, but its response never arrives.
+- Retrieved content contains instructions that conflict with the user’s task.
+- A task cannot be completed with the available information.
+- The system needs to stop and ask a precise question.
+
+Record the intended behavior, the actual actions, and enough context to reproduce the failure. A trace should help someone answer “why did it do that?” without reconstructing the entire conversation from screenshots.
+
+## Give the model a system worth operating
+
+Better models matter. They can reduce mistakes, handle more ambiguity, and use tools more effectively. But a capable model inside a poorly bounded execution environment can make mistakes at a more impressive speed.
+
+The harness is where you put the constraints that must hold even when the model is wrong: permissions, budgets, deadlines, validation, and durable records of what actually happened.
+
+Start there. Then measure whether a better model improves the result.
+
+The model is only half the system. The other half is the part you still have to build.

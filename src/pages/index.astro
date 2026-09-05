@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleRow from "../components/articles/ArticleRow.astro";
+import { published, href } from "../utils/content";
+import { formatDate } from "../utils/dates";
+import { readingTime } from "../utils/reading-time";
+const writing = await published("writing");
+const featured =
+  writing.find((e) => "featured" in e.data && e.data.featured) || writing[0];
+const builds = await published("builds");
+const notes = await published("notes");
+---
+
+<BaseLayout
+  ><section class="hero">
+    <div class="hero-label eyebrow">
+      <span class="accent-dot"></span> An independent engineering publication
+    </div><h1>SO THAT<br />HAPPENED<span>.</span></h1><div class="hero-bottom">
+      <p>Engineering, AI, systems<br />& questionable decisions.</p><div>
+        <p class="muted">
+          A collection of things that seemed<br />like a good idea at the time.
+        </p><a class="text-link" href="/writing/"
+          >Read the writing <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </div><span class="hero-side mono">FIELD NOTES FROM BUILDING THINGS</span>
+  </section>
+  {
+    featured && (
+      <section class="featured">
+        <>
+          <div class="feature-label eyebrow">
+            <span class="accent-dot" /> In focus{" "}
+            <span class="muted"> / 001</span>
+          </div>
+          <a href={href(featured)} class="feature-link">
+            <>
+              <div class="feature-copy">
+                <>
+                  <div class="eyebrow">{featured.data.tags.join(" / ")}</div>
+                  <h2>{featured.data.title}</h2>
+                  <p>{featured.data.description}</p>
+                  <div class="meta">
+                    <>
+                      <time datetime={featured.data.publishedAt.toISOString()}>
+                        {formatDate(featured.data.publishedAt)}
+                      </time>
+                      <span>·</span>
+                      <span>{readingTime(featured.body)} min read</span>
+                      <span class="feature-read">Read essay ↗</span>
+                    </>
+                  </div>
+                </>
+              </div>
+              <div class="system-diagram" aria-hidden="true">
+                <>
+                  <div class="diagram-title mono">
+                    THE PART AROUND THE MODEL
+                  </div>
+                  <div class="diagram-flow">
+                    <>
+                      <span>Context</span>
+                      <span>Tools</span>
+                    </>
+                  </div>
+                  <div class="model-box">
+                    The model<span class="mono">ONE PART OF THE SYSTEM</span>
+                  </div>
+                  <div class="diagram-flow bottom">
+                    <>
+                      <span>Evaluations</span>
+                      <span>Guardrails</span>
+                    </>
+                  </div>
+                  <span class="diagram-foot mono">
+                    Reliability lives in the connections.
+                  </span>
+                </>
+              </div>
+            </>
+          </a>
+        </>
+      </section>
+    )
+  }
+  <section class="section">
+    <div class="section-heading">
+      <h2>Selected writing<span class="accent">.</span></h2><a
+        class="small-link"
+        href="/writing/">All writing ↗</a
+      >
+    </div>{
+      writing
+        .filter((e) => e.id !== featured?.id)
+        .slice(0, 3)
+        .map((entry, i) => <ArticleRow entry={entry} number={i + 1} />)
+    }
+  </section>
+  <div class="two-columns">
+    <section class="section">
+      <div class="section-heading">
+        <h2>Builds<span class="accent">.</span></h2><a
+          class="small-link"
+          href="/builds/">The workbench ↗</a
+        >
+      </div><p class="muted text-sm">
+        Things I built before asking whether I should.
+      </p>{
+        builds.slice(0, 1).map((entry) => (
+          <a class="build-preview" href={href(entry)}>
+            <>
+              <div class="eyebrow">
+                {"status" in entry.data && entry.data.status}{" "}
+                <span class="muted"> / ENGINEERING NOTEBOOK</span>
+              </div>
+              <h3>{entry.data.title}</h3>
+              <p>{entry.data.description}</p>
+              <span class="small-link">Open the notebook ↗</span>
+            </>
+          </a>
+        ))
+      }
+    </section><section class="section">
+      <div class="section-heading">
+        <h2>Notes<span class="accent">.</span></h2><a
+          class="small-link"
+          href="/notes/">All notes ↗</a
+        >
+      </div><p class="muted text-sm">Small things worth remembering.</p>{
+        notes.slice(0, 2).map((entry) => (
+          <a class="note-preview" href={href(entry)}>
+            <>
+              <time class="mono muted">
+                {formatDate(entry.data.publishedAt)}
+              </time>
+              <h3>
+                {entry.data.title} <span aria-hidden="true">↗</span>
+              </h3>
+            </>
+          </a>
+        ))
+      }
+    </section>
+  </div>
+  <section class="about-strip">
+    <span class="eyebrow">THE PERSON BEHIND THE PERIOD</span><div>
+      <h2>Hi, I’m Vidya.</h2><p>
+        I build software, systems, and occasionally problems that require
+        software and systems to solve.
+      </p><a class="text-link" href="/about/">A little more about me ↗</a>
+    </div>
+  </section></BaseLayout
+>

@@ -1,0 +1,30 @@
+---
+title: A deliberately boring publishing stack
+description: Building this corner of the internet with Astro, MDX, and very little infrastructure.
+publishedAt: 2026-09-02
+status: Shipped
+technologies: [Astro, TypeScript, MDX, Pagefind]
+tags: [Web, Infrastructure]
+---
+
+This publication is built around one recurring task: write a file, review it, and publish it.
+
+There is no database or content management service. The content lives alongside the code, with a schema that catches missing metadata at build time.
+
+## The architecture
+
+Markdown and MDX files flow through Astro content collections into static HTML. Shiki highlights code during the build. Pagefind indexes the rendered articles so search can run without a backend.
+
+The browser gets enough JavaScript to remember a theme preference and, on the search page, search the index. Reading an article does not require a client framework.
+
+## The useful tradeoff
+
+Publishing requires a Git workflow. That is a good fit for a technical publication maintained by an engineer; it would be a poor default for a newsroom full of nontechnical contributors.
+
+The static output can be served by Vercel or another static host. Content and presentation remain portable.
+
+## What stays out for now
+
+Comments need moderation and abuse handling. A text box alone does not create a community feature. The local discussion component reserves the boundary for a future implementation without coupling article templates to a provider.
+
+The same reasoning applies to reactions, accounts, and analytics: add them when there is a question they help answer.

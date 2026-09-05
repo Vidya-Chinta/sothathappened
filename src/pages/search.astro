@@ -1,0 +1,51 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Search"
+  description="Somewhere in here, there might be an answer."
+  ><div class="search-wrap">
+    <div id="search"></div><p id="search-status" class="muted" role="status">
+      Loading search…
+    </p><noscript
+      >Search needs JavaScript. Browse <a href="/writing/">writing</a>, <a
+        href="/builds/">builds</a
+      >, or <a href="/notes/">notes</a> instead.</noscript
+    >
+  </div></PageLayout
+>
+<script is:inline>
+  (async () => {
+    const status = document.getElementById("search-status");
+    try {
+      const css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "/pagefind/pagefind-ui.css";
+      document.head.append(css);
+      const script = document.createElement("script");
+      script.src = "/pagefind/pagefind-ui.js";
+      script.onload = () => {
+        new PagefindUI({
+          element: "#search",
+          showSubResults: true,
+          showImages: false,
+          translations: {
+            placeholder: "Search things I’ve broken...",
+            zero_results:
+              "Nothing found. Either your search is wrong or I haven’t written about it yet.",
+          },
+        });
+        status.remove();
+      };
+      script.onerror = () => {
+        status.textContent =
+          "Search is unavailable here. Please browse Writing, Builds, or Notes above.";
+      };
+      document.head.append(script);
+    } catch {
+      status.textContent =
+        "Search is unavailable. Please use the navigation above.";
+    }
+  })();
+</script>

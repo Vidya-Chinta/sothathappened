@@ -1,0 +1,61 @@
+---
+title: "Reversible Decisions: Because Not Every Decision Needs a Funeral"
+description: Match the weight of the process to the cost of changing your mind.
+publishedAt: 2026-08-24
+sample: true
+tags: [Engineering, Tradeoffs]
+---
+
+Some engineering decisions deserve a careful design review. Others deserve a short note and an afternoon of trying the thing.
+
+The trouble starts when we give both categories the same meeting.
+
+## What would undoing this actually take?
+
+“Reversible” is not a personality trait. It is a property of a decision, in a particular system, at a particular time.
+
+Choosing an internal library may be cheap to reverse when it sits behind one module. It becomes more expensive after its types spread across forty services. A database migration may look small in code review and still change the meaning of years of stored data.
+
+Before debating the preferred option, write down the cost of backing out:
+
+- Which data would need to be transformed or recovered?
+- Who outside the team would need to change their behavior?
+- How long could the system operate in a mixed state?
+- What evidence would make us reverse the decision?
+
+The answers tend to be more useful than the number of people invited to the meeting.
+
+## Buy a way back
+
+A feature flag, a staged rollout, or a narrow interface can reduce the cost of being wrong. Each also has a maintenance cost. The point is not to wrap every line of code in an escape hatch.
+
+The point is to spend a little effort where it meaningfully limits exposure.
+
+> Confidence is useful. A working rollback is also useful, and tends to be easier to verify.
+
+A rollback should include the data story. Reverting the application does not necessarily undo writes made by the new version. If old code cannot read new records, your rollback plan is mostly a statement of intent.
+
+## Put an expiry date on the experiment
+
+A temporary decision without a review date is a permanent decision with better branding.
+
+Keep the record short:
+
+```yaml
+question: Should exports move to a background worker?
+trial: Enable for internal accounts for one week.
+success: Requests finish within the interactive latency budget.
+watch: Duplicate jobs, queue age, and support reports.
+rollback: Disable enqueueing; drain existing jobs with the worker.
+review: Compare observed load and failure modes before expanding.
+```
+
+This is enough to preserve the reasoning without turning a bounded experiment into an architectural constitution.
+
+## Slow down where the consequences compound
+
+Public APIs, security boundaries, and irreversible data loss deserve a different pace. So do decisions that are cheap for your team but expensive for everyone downstream.
+
+Reversibility is a reason to calibrate the process. It is not a permission slip to ignore consequences.
+
+For the smaller choices, though, make the uncertainty explicit, limit the exposure, and collect evidence. You can learn more from a careful afternoon in production than from three weeks of hypothetical certainty.

@@ -1,0 +1,72 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Hi, I’m Vidya"
+  label="The person behind the period"
+  description="I build software, systems, and occasionally problems that require software and systems to solve."
+  ><div class="reading-column about-body prose">
+    <p>
+      I’ve spent the last several years working across backend engineering,
+      cloud infrastructure, AI, startups, and engineering leadership.
+    </p><p>
+      This is where I write about what I’ve learned while building things. The
+      useful patterns. The less useful assumptions. The decisions that looked
+      perfectly reasonable before they met production.
+    </p><h2>Publication first. Portfolio second.</h2><p>
+      Good engineering writing makes the reasoning visible. What did we know?
+      What did we trade away? What would we do differently?
+    </p><p>
+      That’s the kind of space I want this to be: serious about the work,
+      comfortable with uncertainty, and willing to laugh at a questionable
+      decision.
+    </p><h2>Things I keep coming back to</h2><dl class="interests">
+      {
+        [
+          ["AI & Agents", "Making machines do things."],
+          [
+            "Distributed Systems",
+            "Everything is fine until the network gets involved.",
+          ],
+          ["Backend", "The part nobody sees until it breaks."],
+          ["Infrastructure", "Where simple ideas go to become expensive."],
+          ["Cloud", "Someone else’s computer, now with billing alerts."],
+          ["Startups", "Making decisions before we have enough information."],
+          ["Leadership", "Apparently, code isn't the hard part."],
+        ].map(([title, description]) => (
+          <div>
+            <>
+              <dt>{title}</dt>
+              <dd>{description}</dd>
+            </>
+          </div>
+        ))
+      }
+    </dl><p>
+      If that sounds like your kind of reading, <a href="/writing/"
+        >start with the writing</a
+      >. You can also <a href="/rss.xml">follow along via RSS</a>.
+    </p>
+  </div></PageLayout
+>
+
+<style>
+  .interests {
+    margin: 0 0 2rem;
+  }
+  .interests > div {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .interests dt {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .interests dd {
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+</style>

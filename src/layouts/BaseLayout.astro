@@ -1,0 +1,213 @@
+---
+import "../styles/global.css";
+import "@fontsource/instrument-sans/400.css";
+import "@fontsource/instrument-sans/500.css";
+import "@fontsource/instrument-sans/600.css";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource/ibm-plex-mono/400.css";
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  article?: { publishedAt: Date; updatedAt?: Date };
+}
+const {
+  title,
+  description = "Engineering, AI, systems & questionable decisions. An independent technical publication by Vidya.",
+  canonical,
+  image = "/og/home.png",
+  article,
+} = Astro.props;
+const pageTitle = title
+  ? `${title} — So That Happened`
+  : "So That Happened — Engineering, AI & systems";
+const url = canonical || new URL(Astro.url.pathname, Astro.site).href;
+const nav = ["Writing", "Builds", "Notes", "About"];
+---
+
+<!doctype html>
+<html lang="en">
+  <head
+    ><meta charset="UTF-8" /><meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /><meta name="theme-color" content="#f5f3ed" /><title>
+      {pageTitle}
+    </title><meta name="description" content={description} /><link
+      rel="canonical"
+      href={url}
+    /><link rel="icon" href="/favicon.svg" type="image/svg+xml" /><link
+      rel="alternate"
+      type="application/rss+xml"
+      title="So That Happened"
+      href="/rss.xml"
+    />
+    <meta property="og:type" content={article ? "article" : "website"} /><meta
+      property="og:title"
+      content={title || "SO THAT HAPPENED."}
+    /><meta property="og:description" content={description} /><meta
+      property="og:url"
+      content={url}
+    /><meta property="og:site_name" content="So That Happened" /><meta
+      property="og:image"
+      content={new URL(image, Astro.site).href}
+    /><meta property="og:image:width" content="1200" /><meta
+      property="og:image:height"
+      content="630"
+    /><meta name="twitter:card" content="summary_large_image" /><meta
+      name="twitter:title"
+      content={title || "SO THAT HAPPENED."}
+    /><meta name="twitter:description" content={description} /><meta
+      name="twitter:image"
+      content={new URL(image, Astro.site).href}
+    />
+    {
+      article && (
+        <>
+          <>
+            <meta
+              property="article:published_time"
+              content={article.publishedAt.toISOString()}
+            />
+            <meta
+              property="article:modified_time"
+              content={(article.updatedAt || article.publishedAt).toISOString()}
+            />
+            <meta name="author" content="Vidya" />
+            <script
+              is:inline
+              type="application/ld+json"
+              set:html={JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                headline: title,
+                description,
+                url,
+                image: new URL(image, Astro.site).href,
+                datePublished: article.publishedAt.toISOString(),
+                dateModified: (
+                  article.updatedAt || article.publishedAt
+                ).toISOString(),
+                author: {
+                  "@type": "Person",
+                  name: "Vidya",
+                  url: new URL("/about/", Astro.site).href,
+                },
+                publisher: {
+                  "@type": "Organization",
+                  name: "So That Happened",
+                },
+              }).replace(/</g, "\\u003c")}
+            />
+          </>
+        </>
+      )
+    }
+    <script is:inline>
+      try {
+        const t = localStorage.getItem("theme");
+        document.documentElement.dataset.theme =
+          t === "dark" || t === "light"
+            ? t
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+      } catch {
+        document.documentElement.dataset.theme = matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches
+          ? "dark"
+          : "light";
+      }
+    </script>
+  </head><body
+    ><a class="skip-link" href="#main">Skip to content</a><div
+      class="site-shell"
+    >
+      <header class="site-header">
+        <a class="wordmark" href="/" aria-label="So That Happened, home"
+          >SO THAT HAPPENED<span>.</span></a
+        ><nav aria-label="Main navigation">
+          {
+            nav.map((label) => (
+              <a
+                href={`/${label.toLowerCase()}/`}
+                aria-current={
+                  Astro.url.pathname.startsWith(`/${label.toLowerCase()}`)
+                    ? "page"
+                    : undefined
+                }
+              >
+                {label}
+              </a>
+            ))
+          }
+        </nav><div class="header-tools">
+          <a class="icon-button" href="/search/" aria-label="Search"
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              ><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"
+              ></path></svg
+            ></a
+          ><button
+            class="icon-button theme-toggle"
+            type="button"
+            aria-label="Switch color theme"
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              ><path d="M20 14A8.5 8.5 0 0 1 10 4a8.5 8.5 0 1 0 10 10Z"
+              ></path></svg
+            ></button>
+        </div>
+      </header><main id="main"><slot /></main><footer class="site-footer">
+        <div>
+          <a class="wordmark" href="/">SO THAT HAPPENED<span>.</span></a><p>
+            Built with curiosity, TypeScript,<br />and questionable decisions.
+          </p>
+        </div><div class="footer-right">
+          <a href="/rss.xml">Follow via RSS ↗</a><span
+            >© {new Date().getFullYear()} Vidya</span
+          ><span class="mono">Independent by design.</span>
+        </div>
+      </footer>
+    </div>
+    <script>
+      const button = document.querySelector<HTMLButtonElement>(".theme-toggle");
+      function label() {
+        button?.setAttribute(
+          "aria-label",
+          `Switch to ${document.documentElement.dataset.theme === "dark" ? "light" : "dark"} mode`,
+        );
+      }
+      label();
+      button?.addEventListener("click", () => {
+        const theme =
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = theme;
+        try {
+          localStorage.setItem("theme", theme);
+        } catch {}
+        label();
+      });
+      matchMedia("(prefers-color-scheme: dark)").addEventListener(
+        "change",
+        (e) => {
+          try {
+            if (localStorage.getItem("theme")) return;
+          } catch {}
+          document.documentElement.dataset.theme = e.matches ? "dark" : "light";
+          label();
+        },
+      );
+    </script></body>
+</html>

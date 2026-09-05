@@ -1,0 +1,22 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import ArticleRow from "../../components/articles/ArticleRow.astro";
+import { published } from "../../utils/content";
+const entries = await published("notes");
+---
+
+<PageLayout title="Notes" description="Small things worth remembering."
+  ><div class="listing">
+    {
+      entries.length === 0 ? (
+        <p class="muted" style="padding-block: 2rem">
+          Nothing here yet. Suspicious.
+        </p>
+      ) : (
+        entries.map((entry, i) => (
+          <ArticleRow entry={entry} number={i + 1} heading="h2" />
+        ))
+      )
+    }
+  </div></PageLayout
+>

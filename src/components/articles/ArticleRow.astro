@@ -1,0 +1,27 @@
+---
+import { href, type Entry } from "../../utils/content";
+import { formatDate } from "../../utils/dates";
+import { readingTime } from "../../utils/reading-time";
+const {
+  entry,
+  number,
+  heading = "h3",
+} = Astro.props as { entry: Entry; number?: number; heading?: "h2" | "h3" };
+const Heading = heading;
+---
+
+<a class="article-row" href={href(entry)}
+  >{
+    number && (
+      <span class="row-number mono">{String(number).padStart(2, "0")}</span>
+    )
+  }<div class="row-copy">
+    <div class="eyebrow">{entry.data.tags.slice(0, 2).join(" / ")}</div><Heading
+      >{entry.data.title}</Heading
+    ><p>{entry.data.description}</p><div class="meta">
+      <time datetime={entry.data.publishedAt.toISOString()}
+        >{formatDate(entry.data.publishedAt)}</time
+      ><span>·</span><span>{readingTime(entry.body)} min read</span>
+    </div>
+  </div><span class="row-arrow" aria-hidden="true">↗</span></a
+>

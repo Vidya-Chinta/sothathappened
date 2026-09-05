@@ -1,0 +1,18 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import ArticleRow from "../../components/articles/ArticleRow.astro";
+import { published } from "../../utils/content";
+const entries = await published("writing");
+---
+
+<PageLayout
+  title="Writing"
+  description="Technical essays, things learned the hard way, and ideas worth a second look."
+  ><div class="listing">
+    {
+      entries.map((entry, i) => (
+        <ArticleRow entry={entry} number={i + 1} heading="h2" />
+      ))
+    }
+  </div></PageLayout
+>

@@ -1,0 +1,18 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import ArticleRow from "../../components/articles/ArticleRow.astro";
+import { published } from "../../utils/content";
+const entries = await published("builds");
+---
+
+<PageLayout
+  title="Builds"
+  description="Things I built before asking whether I should."
+  ><div class="listing">
+    {
+      entries.map((entry, i) => (
+        <ArticleRow entry={entry} number={i + 1} heading="h2" />
+      ))
+    }
+  </div></PageLayout
+>
