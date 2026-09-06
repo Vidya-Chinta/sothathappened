@@ -43,13 +43,6 @@ const related = (await published(entry.collection))
       </div>
     </header><div class="reading-column">
       {
-        entry.data.sample && (
-          <aside class="sample-notice" data-pagefind-ignore>
-            Sample essay · Illustrative content for this publication’s first
-            edition.
-          </aside>
-        )
-      }{
         "technologies" in entry.data && (
           <div class="tag-list" data-pagefind-ignore>
             <span class="tag">{entry.data.status}</span>

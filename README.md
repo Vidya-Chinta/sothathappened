@@ -32,7 +32,7 @@ Writing also supports `updatedAt`, `series`, `cover`, and an absolute `canonical
 
 Drafts and future-dated entries are excluded from generated detail pages, indexes, RSS, sitemap, social cards, and search. `draft-check.md` is a deliberate exclusion fixture.
 
-The three starter essays and two notes are illustrative, not claims about Vidya’s real projects. They are isolated in content files with `sample: true`, which displays a notice. Replace their bodies and remove that flag before editorial launch. The build notebook describes this implementation.
+The three starter essays and two notes are illustrative, not claims about Vidya’s real projects. They are isolated in content files with `sample: true` as internal editorial metadata. This flag does not display a reader-facing notice. The build notebook describes this implementation.
 
 MDX supports local Astro components (see `Aside.astro`), GFM tables, footnotes, highlighted code, and heading anchors. Keep images local, with useful alternative text. Use portable Markdown wherever possible.
 
