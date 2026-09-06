@@ -42,7 +42,7 @@ Shared light/dark tokens are in `src/styles/global.css`; prose and code styles h
 
 Article-specific 1200×630 PNG social cards are rendered deterministically at build time with Satori and Resvg. They use local fonts and require no remote generation service. The canonical origin is `https://sothathappened.lol` in Astro configuration and RSS.
 
-`Comments.astro` is the replaceable future discussion boundary. There is no comment form or fake submission. Personal GitHub, LinkedIn, and email links are intentionally absent until verified addresses are provided. No tracking is installed.
+`Comments.astro` is the replaceable future discussion boundary. There is no comment form or fake submission. About and footer contacts are maintained in `src/data/social.ts`. Topic labels and unchanged editorial descriptions live in `src/data/topics.ts`, with stable slugs and optional URLs. Topics remain plain text until a real destination is supplied. No tracking is installed.
 
 ## Vercel deployment
 

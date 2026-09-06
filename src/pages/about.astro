@@ -1,4 +1,6 @@
 ---
+import SocialLinks from "../components/layout/SocialLinks.astro";
+import { topics } from "../data/topics";
 import PageLayout from "../layouts/PageLayout.astro";
 ---
 
@@ -23,23 +25,10 @@ import PageLayout from "../layouts/PageLayout.astro";
       decision.
     </p><h2>Things I keep coming back to</h2><dl class="interests">
       {
-        [
-          ["AI & Agents", "Making machines do things."],
-          [
-            "Distributed Systems",
-            "Everything is fine until the network gets involved.",
-          ],
-          ["Backend", "The part nobody sees until it breaks."],
-          ["Infrastructure", "Where simple ideas go to become expensive."],
-          ["Cloud", "Someone else’s computer, now with billing alerts."],
-          ["Startups", "Making decisions before we have enough information."],
-          ["Leadership", "Apparently, code isn't the hard part."],
-        ].map(([title, description]) => (
-          <div>
-            <>
-              <dt>{title}</dt>
-              <dd>{description}</dd>
-            </>
+        topics.map(({ slug, title, description, href }) => (
+          <div id={`topic-${slug}`}>
+            <dt>{href ? <a href={href}>{title}</a> : title}</dt>
+            <dd>{description}</dd>
           </div>
         ))
       }
@@ -47,7 +36,9 @@ import PageLayout from "../layouts/PageLayout.astro";
       If that sounds like your kind of reading, <a href="/writing/"
         >start with the writing</a
       >.
-    </p>
+    </p><h2>Elsewhere on the internet</h2><SocialLinks
+      label="Find Vidya and follow the publication"
+    />
   </div></PageLayout
 >
 

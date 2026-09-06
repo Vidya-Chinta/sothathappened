@@ -800,3 +800,54 @@ svg {
 .hero-side {
   font-size: 12px;
 }
+
+/* Small cues for real controls, with no movement of the reading layout. */
+a,
+button {
+  transition:
+    color 140ms ease,
+    text-decoration-color 140ms ease;
+}
+a:focus-visible,
+.icon-button:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+.site-header nav a:is(:hover, :focus-visible),
+.small-link:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+.row-arrow {
+  transition: transform 140ms ease;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .article-row:hover .row-arrow {
+    transform: translate(2px, -2px);
+  }
+}
+.footer-right {
+  align-items: flex-end;
+}
+@media (max-width: 767px) {
+  .footer-right {
+    align-items: flex-start;
+  }
+  .site-header nav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .section-heading {
+    flex-wrap: wrap;
+  }
+  .article-header h1,
+  .page-header h1 {
+    overflow-wrap: break-word;
+  }
+  .row-copy p {
+    font-size: 1rem;
+  }
+  .about-body {
+    padding-bottom: 3rem;
+  }
+}
